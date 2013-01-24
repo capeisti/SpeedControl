@@ -14,4 +14,5 @@ class Controller {
     View* m_view;
     volatile unsigned long eventTime;
     unsigned long pressTime;
+    unsigned long frameTime;
 };

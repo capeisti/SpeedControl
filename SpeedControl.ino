@@ -11,7 +11,7 @@ View view;
 Model model;
 Controller controller(&model, &view);
 
-void setup() {  
+void setup() {
   // initialize serial:
 //  Serial1.begin(9600);
   Serial.begin(9600);
@@ -24,6 +24,9 @@ void setup() {
 void loop() {
   boolean state = digitalRead(2);
   controller.pump(state);
+  model.pump();
+  
+
 }
 
 void interrupt() {

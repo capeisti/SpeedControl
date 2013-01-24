@@ -4,6 +4,14 @@
 class View {
   public:
     View();
-    void setLedStatus(Model::EMode mode);
+    void setLedStatus(int mode);
+    void nextFrame();
+    void resetAnim();
 
+  private:
+    void printFast();
+    void printSlow();
+    void printStatic();
+    void printSetup();
+    int m_frame;
 };
