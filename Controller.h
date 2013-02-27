@@ -8,8 +8,10 @@ class Controller {
     Controller(Model* model, View* view);  
     void interrupt(unsigned long time);
     void pump(boolean pin2State);
+    
   private:
-    void keyEvent(boolean pressed);
+    void keyEvent(boolean pressed);    
+   
     Model* m_model;
     View* m_view;
     volatile unsigned long eventTime;

@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include <Servo.h>
 
 class Model {
   public:
@@ -20,8 +21,13 @@ class Model {
     void pump();
     int getThrottle();
     
+    void setServo(int value);
+    void setSpeed(int value);
+    
   private:
     EMode m_mode;
     boolean m_setup;
     int throttleValue;
+    int speedValue;
+    Servo servo;
 };

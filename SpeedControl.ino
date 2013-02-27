@@ -1,19 +1,24 @@
 #include <Servo.h>
 #include "View.h"
 #include "Controller.h"
+#include "SerialController.h"
 #include "Model.h"
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
-Servo myservo;
 
-View view;
-Model model;
-Controller controller(&model, &view);
+View* view;
+Model* model;
+Controller* controller;
+SerialController* serial;
 
 void setup() {
   // initialize serial:
-//  Serial1.begin(9600);
+  Serial1.begin(9600);
+  view = new View();
+  model = new Model();
+  serial = new SerialController(model);
+  controller = new Controller(model, view);
   Serial.begin(9600);
   
   // reserve 200 bytes for the inputString:
@@ -23,15 +28,19 @@ void setup() {
 
 void loop() {
   boolean state = digitalRead(2);
-  controller.pump(state);
-  model.pump();
+  controller->pump(state);
+  model->pump();
   
-
+  if(stringComplete) {
+    serial->serialGet(inputString);
+    inputString = "";
+    stringComplete = false;
+  }
 }
 
 void interrupt() {
   unsigned long eventTime = millis();
-  controller.interrupt(eventTime);
+  controller->interrupt(eventTime);
 }
 
 /*

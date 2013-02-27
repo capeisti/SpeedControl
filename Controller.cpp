@@ -71,5 +71,4 @@ void Controller::pump(boolean pin2State) {
     frameTime = millis();
     m_view->setLedStatus(mode);
   }
-  
 }
