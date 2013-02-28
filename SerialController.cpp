@@ -1,7 +1,8 @@
 #include "SerialController.h"
 
-SerialController::SerialController(Model* model) {
+SerialController::SerialController(Model* model, View* view) {
   this->m_model = model;
+  this->m_view = view;
 }
 
 String SerialController::getField(const String& line, int field) {
@@ -33,6 +34,7 @@ void SerialController::serialGet(const String& line) {
     speed.replace(".", "");
     char buf[speed.length()+1];
     speed.toCharArray(buf, sizeof(buf));
-    m_model->setSpeed(atoi(buf)); 
+    m_model->setMeasuredSpeed(atoi(buf));
+    m_view->setCommAlive(); 
   }
 }

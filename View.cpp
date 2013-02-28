@@ -78,6 +78,10 @@ void View::printStatic() {
   }
 }
 
+void View::setCommAlive() {
+  digitalWrite(8, LOW);
+}
+
 void View::printSetup() {
   if(m_frame%2 == 0) {
     digitalWrite(11, LOW);

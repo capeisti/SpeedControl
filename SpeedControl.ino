@@ -17,7 +17,7 @@ void setup() {
   Serial1.begin(9600);
   view = new View();
   model = new Model();
-  serial = new SerialController(model);
+  serial = new SerialController(model, view);
   controller = new Controller(model, view);
   Serial.begin(9600);
   

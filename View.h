@@ -5,6 +5,7 @@ class View {
   public:
     View();
     void setLedStatus(int mode);
+    void setCommAlive();
     void nextFrame();
     void resetAnim();
 

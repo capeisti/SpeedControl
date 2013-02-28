@@ -21,13 +21,17 @@ class Model {
     void pump();
     int getThrottle();
     
-    void setServo(int value);
-    void setSpeed(int value);
+    void setThrottle(int value);
+    void setMeasuredSpeed(int value);
     
   private:
     EMode m_mode;
     boolean m_setup;
     int throttleValue;
+    int servoValue;
     int speedValue;
+    int targetValue;
     Servo servo;
+    int lowValue;
+    int highValue;
 };
