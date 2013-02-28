@@ -29,7 +29,6 @@ void setup() {
 void loop() {
   boolean state = digitalRead(2);
   controller->pump(state);
-  model->pump();
   
   if(stringComplete) {
     serial->serialGet(inputString);

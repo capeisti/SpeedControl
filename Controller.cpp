@@ -58,6 +58,7 @@ void Controller::pump(boolean pin2State) {
     this->m_model->setup();    
   }
   
+  //Update view in every 300 ms.
   if (millis() - frameTime > 300) {
     static int prevThrottle = m_model->getThrottle();
   
@@ -70,5 +71,24 @@ void Controller::pump(boolean pin2State) {
     m_view->nextFrame();
     frameTime = millis();
     m_view->setLedStatus(mode);
+  }
+  
+  //Throttle potentiometer.
+  //Calculate mean over 1024 samples and have treshold value to avoid instability.
+  static long sum = 0;
+  static int counter = 0;
+  sum += analogRead(4); 
+  counter++;
+  
+  if (counter == 1023) {
+    int meanValue = sum>>10;
+    sum = 0;
+    counter = 0;
+    
+    int current = m_model->getThrottle();
+    //Update only if value has changed over treshold.
+    if (abs(current-meanValue) > 3) {
+      m_model->setThrottle(meanValue);
+    }  
   }
 }

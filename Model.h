@@ -18,13 +18,14 @@ class Model {
     void setup();
     void resume();
     EMode getMode();
-    void pump();
     int getThrottle();
-    
     void setThrottle(int value);
+    
     void setMeasuredSpeed(int value);
     
   private:
+  void setServo(int value);
+  
     EMode m_mode;
     boolean m_setup;
     int throttleValue;

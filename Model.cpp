@@ -58,25 +58,12 @@ void Model::resume() {
 }
 
 /**
-* System loop.
+* Set throttle potentiometer value.
 */
-void Model::pump() {
-  static long sum = 0;
-  static int counter = 0;
-  sum += analogRead(4); 
-  counter++;
-  
-  if (counter == 1023) {
-    int meanValue = sum>>10;
-    sum = 0;
-    counter = 0;
-    
-    if (abs(throttleValue-meanValue) > 3) {
-      this->throttleValue = meanValue;
-      this->m_mode = eOff;    
-      setThrottle(this->throttleValue);      
-    }  
-  }
+void Model::setThrottle(int value) {
+  this->throttleValue = value;
+  this->m_mode = eOff;
+  setServo(this->throttleValue);
 }
 
 /**
@@ -87,10 +74,10 @@ int Model::getThrottle() {
 }
 
 /**
-* Got throttle potentiometer value from user or PID.
+* Got servo setup value from PID or throttle.
 * Value is between 0..1024.
 */
-void Model::setThrottle(int value) {
+void Model::setServo(int value) {
   this->servoValue = value;
   int mapped = map(value, 0, 1023, 2, 179);
   this->servo.write(mapped);
@@ -120,6 +107,6 @@ void Model::setMeasuredSpeed(int value) {
     this->servoValue += error;
     
     //Input to servo
-    setThrottle(this->servoValue); 
+    setServo(this->servoValue); 
   }
 }
