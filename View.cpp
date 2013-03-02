@@ -43,7 +43,7 @@ void View::setLedStatus(int mode) {
     digitalWrite(6, LOW);
   }
   
-  if (this->m_blinkDot) {
+  if (this->m_blinkDot && m_frame == 1) {
     digitalWrite(8, LOW);
     this->m_blinkDot = false;
   }
@@ -76,12 +76,7 @@ void View::printFast() {
 }
 
 void View::printStatic() {
-  switch(m_frame) {
-    case 1: digitalWrite(7, LOW); break;
-    case 3: digitalWrite(7, LOW); break;
-    case 5: digitalWrite(7, LOW); break;
-    case 7: digitalWrite(7, LOW); break;
-  }
+  digitalWrite(7, LOW);
 }
 
 void View::setCommAlive() {
