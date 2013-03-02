@@ -1,6 +1,7 @@
 #include "View.h"
 
 View::View() {
+  this->m_blinkDot = false;
   for (int loop=4; loop <= 11; loop++) {
     pinMode(loop, OUTPUT);
     digitalWrite(loop, HIGH);
@@ -41,6 +42,11 @@ void View::setLedStatus(int mode) {
   } else if (mode & Model::eDown) {
     digitalWrite(6, LOW);
   }
+  
+  if (this->m_blinkDot) {
+    digitalWrite(8, LOW);
+    this->m_blinkDot = false;
+  }
 }
 
 void View::printSlow() {
@@ -79,7 +85,7 @@ void View::printStatic() {
 }
 
 void View::setCommAlive() {
-  digitalWrite(8, LOW);
+  this->m_blinkDot = true;
 }
 
 void View::printSetup() {

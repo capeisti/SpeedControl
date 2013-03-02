@@ -5,6 +5,9 @@ SerialController::SerialController(Model* model, View* view) {
   this->m_view = view;
 }
 
+/**
+* Parse field from NMEA-0183 line.
+*/
 String SerialController::getField(const String& line, int field) {
   int index = 0;
   for (int loop=0; loop < field; loop++) {

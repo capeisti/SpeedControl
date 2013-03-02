@@ -15,4 +15,5 @@ class View {
     void printStatic();
     void printSetup();
     int m_frame;
+    boolean m_blinkDot;
 };
