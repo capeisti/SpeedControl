@@ -22,7 +22,10 @@ Model::Model() {
 */
 void Model::nextMode() {
   switch (this->m_mode) {
-    case eOff: m_mode = eStatic; break;
+    case eOff: {
+      m_mode = eStatic; 
+      this->targetValue = this->lowValue;
+    } break;
     case eStatic: m_mode = eSlow; break;
     case eSlow: m_mode = eFast; break;
     case eFast: m_mode = eStatic; break;
@@ -109,6 +112,9 @@ void Model::setServo(int value) {
   this->servo.write(mapped);
 }
 
+/**
+* Limit value to be between min and max.
+*/
 int Model::limit(int value, int min, int max) {
   if (value < min) {
     return min;
@@ -120,28 +126,66 @@ int Model::limit(int value, int min, int max) {
 }
 
 /**
-* Got speed measurement from plotter.
-* Value is knots * 10.
+* Called every second.
 */
-void Model::setMeasuredSpeed(int value) {
-  this->targetValue = this->lowValue; 
-  this->speedValue = value;
+void Model::secondTick() {
+  static int seconds = 0;
+  seconds++;
   
-  //go into PID if in autopilot mode
-  if (!this->m_setup && this->m_mode != eOff) {
-    //Drop autopilot if not target speed
-    if (this->targetValue == 0) {
-      this->m_mode = eOff;
-      return;
-    }
-    
+  if (!isAutoPilotMode()) {
+    seconds = 0;
+    return;
+  }
+  
+  if (this->m_mode == eStatic) {
+    seconds = 0;
+  } else if (this->m_mode == eSlow && seconds > 30) {
+    switchTargetValue();  
+    seconds = 0;
+  } else if (this->m_mode == eFast && seconds > 5) {
+    switchTargetValue();
+    seconds = 0;
+  }
+}
+
+void Model::switchTargetValue() {
+  if (this->targetValue == this->lowValue) {
+    this->targetValue = this->highValue;
+  } else {
+    this->targetValue = this->lowValue;
+  }
+}
+
+int Model::doPID() {
     //Do PID
     int p = this->targetValue - this->speedValue;
     int i = 0;
     int d = 0;
     int error = p * 10 + i + d;
-    
+    return error;
+}
+
+boolean Model::isAutoPilotMode() {
+  if (this->m_setup || 
+      this->m_mode == eOff || 
+      this->targetValue == 0) {
+    return false;
+  }
+  
+  return true;
+}  
+
+/**
+* Got speed measurement from plotter.
+* Value is knots * 10.
+*/
+void Model::setMeasuredSpeed(int value) {  
+  this->speedValue = value;
+  
+  //go into PID if in autopilot mode
+  if (isAutoPilotMode()) {
     //Input to servo
+    int error = doPID();
     setServo(this->servoValue + error); 
   }
 }

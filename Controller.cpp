@@ -114,6 +114,7 @@ void Controller::pump(boolean pin2State) {
   //Print state for every second.
   static unsigned long secondTime = 0;
   if (millis() - secondTime > 1000) {
+    m_model->secondTick();
     m_model->printState();
     secondTime = millis();
   }

@@ -22,10 +22,14 @@ class Model {
     void setThrottle(int value);    
     void setMeasuredSpeed(int value);
     void printState();
+    void secondTick();
     
   private:
     void setServo(int value);
     int limit(int value, int min, int max);
+    int doPID();
+    void switchTargetValue();
+    boolean isAutoPilotMode();
   
     EMode m_mode;
     boolean m_setup;
