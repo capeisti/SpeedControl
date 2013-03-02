@@ -73,6 +73,13 @@ void Controller::pump(boolean pin2State) {
     m_view->setLedStatus(mode);
   }
   
+  //Print state for every second.
+  static unsigned long secondTime = 0;
+  if (millis() - secondTime > 1000) {
+    m_model->printState();
+    secondTime = millis();
+  }
+  
   //Throttle potentiometer.
   //Calculate mean over 1024 samples and have treshold value to avoid instability.
   static long sum = 0;

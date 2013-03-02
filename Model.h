@@ -19,12 +19,13 @@ class Model {
     void resume();
     EMode getMode();
     int getThrottle();
-    void setThrottle(int value);
-    
+    void setThrottle(int value);    
     void setMeasuredSpeed(int value);
+    void printState();
     
   private:
-  void setServo(int value);
+    void setServo(int value);
+    int limit(int value, int min, int max);
   
     EMode m_mode;
     boolean m_setup;

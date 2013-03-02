@@ -1,4 +1,7 @@
 #include "Model.h"
+static const int SERVO_MAX = 179;
+static const int SERVO_MIN = 1;
+
 Model::Model() {
   this->m_mode = eOff;
   this->m_setup = false;
@@ -50,11 +53,26 @@ void Model::resume() {
   } else {
     this->highValue = this->speedValue;
   }
-  
-  Serial.print("low: ");
-  Serial.print(this->lowValue);
-  Serial.print(" high: ");
-  Serial.println(this->highValue);
+}
+
+void Model::printState() {
+  if (Serial) {
+    Serial.print("lowSpeed=");
+    Serial.print(this->lowValue);
+    Serial.print(":highSpeed=");
+    Serial.print(this->highValue);
+    Serial.print(":targetSpeed=");
+    Serial.print(this->targetValue);
+    Serial.print(":measuredSpeed=");
+    Serial.print(this->speedValue);
+    Serial.print(":throttleValue=");
+    Serial.print(this->throttleValue);
+    Serial.print(":servoValue=");
+    Serial.print(this->servoValue);
+    Serial.print(":mode=");
+    Serial.print(this->m_mode);
+    Serial.println("");
+  }
 }
 
 /**
@@ -78,9 +96,19 @@ int Model::getThrottle() {
 * Value is between 0..1024.
 */
 void Model::setServo(int value) {
-  this->servoValue = value;
-  int mapped = map(value, 0, 1023, 2, 179);
+  this->servoValue = limit(value, 0, 1023);
+  int mapped = map(this->servoValue, 0, 1023, SERVO_MIN, SERVO_MAX);
   this->servo.write(mapped);
+}
+
+int Model::limit(int value, int min, int max) {
+  if (value < min) {
+    return min;
+  } else if (value > max) {
+    return max;
+  }
+  
+  return value;
 }
 
 /**
@@ -104,9 +132,8 @@ void Model::setMeasuredSpeed(int value) {
     int i = 0;
     int d = 0;
     int error = p * 10 + i + d;
-    this->servoValue += error;
     
     //Input to servo
-    setServo(this->servoValue); 
+    setServo(this->servoValue + error); 
   }
 }
