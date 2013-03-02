@@ -1,14 +1,17 @@
 #include "Model.h"
+#include <EEPROM.h>
+
 static const int SERVO_MAX = 179;
 static const int SERVO_MIN = 1;
+static const unsigned int EEPROM_MEM = 0;
 
 Model::Model() {
   this->m_mode = eOff;
   this->m_setup = false;
   this->throttleValue = 0;
   this->speedValue = 0;
-  this->lowValue = 0;
-  this->highValue = 0;
+  this->lowValue = EEPROM.read(EEPROM_MEM) | EEPROM.read(EEPROM_MEM+1)<<8;
+  this->highValue = EEPROM.read(EEPROM_MEM+2) | EEPROM.read(EEPROM_MEM+3)<<8;
   this->targetValue = 0;
   this->servoValue = 0;
   this->servo.attach(12);
@@ -53,6 +56,11 @@ void Model::resume() {
   } else {
     this->highValue = this->speedValue;
   }
+  
+  EEPROM.write(EEPROM_MEM, this->lowValue & 0xFF);
+  EEPROM.write(EEPROM_MEM+1, (this->lowValue>>8) & 0xFF);
+  EEPROM.write(EEPROM_MEM+2, this->highValue & 0xFF);
+  EEPROM.write(EEPROM_MEM+3, (this->highValue>>8) & 0xFF);
 }
 
 void Model::printState() {

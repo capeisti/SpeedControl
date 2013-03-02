@@ -1,4 +1,5 @@
 #include <Servo.h>
+#include <EEPROM.h>
 #include "View.h"
 #include "Controller.h"
 #include "SerialController.h"
