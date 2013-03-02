@@ -5,7 +5,6 @@ Controller::Controller(Model* model, View* view) {
   this->m_view = view;
   this->eventTime = 0;
   this->pressTime = 0;
-  this->frameTime = 0;
   pinMode(2, INPUT);
   
   m_view->setLedStatus(m_model->getMode());
@@ -59,6 +58,7 @@ void Controller::pump(boolean pin2State) {
   }
   
   //Update view in every 300 ms.
+  static unsigned long frameTime = 0;
   if (millis() - frameTime > 300) {
     static int prevThrottle = m_model->getThrottle();
   
