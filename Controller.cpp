@@ -11,27 +11,6 @@ Controller::Controller(Model* model, View* view) {
 }
 
 /**
-  Handle key event for pressed and released.
-*/
-void Controller::keyEvent(boolean pressed) {
-  //On press down start measure time pressed
-  if (pressed) {
-    this->pressTime = millis();
-  } else { //on release change mode
-    this->pressTime = 0;
-    
-    //Return from setup to normal mode
-    if (this->m_model->getMode() == Model::eSetup) {
-      m_model->resume();
-    } else { //select next mode
-      m_model->nextMode();
-    }
-  }
-  
-  m_view->resetAnim();
-}
-
-/**
   Pin 2 interrupt handler.
 */
 void Controller::interrupt(unsigned long time) {
@@ -39,16 +18,35 @@ void Controller::interrupt(unsigned long time) {
 }
 
 /**
-  pump() is called on every Arduino loop().
-  Parameter pin2State is a speed hack.
+* Handle raw button presses.
 */
-void Controller::pump(boolean pin2State) {
+void Controller::handleButtonEvent(boolean pin2State) {
   //After 50ms of last interrupt assume that pin 2 is settled
   if (eventTime != 0 && millis() - eventTime > 50) {    
-    keyEvent(pin2State);
+    //On press down start measure time pressed
+    if (pin2State) {
+      this->pressTime = millis();
+    } else { //on release change mode
+      this->pressTime = 0;
+      
+      //Return from setup to normal mode
+      if (this->m_model->getMode() == Model::eSetup) {
+        m_model->resume();
+      } else { //select next mode
+        m_model->nextMode();
+      }
+    }
+    
+    m_view->resetAnim();
+    //have handled button event. now reset it.
     eventTime = 0;
   }
-  
+}
+
+/**
+* Handle keep pressed down of button.
+*/
+void Controller::handleKeepPressed() {
   //if pressed down for over second and not yet in setup mode
   if (this->pressTime != 0 &&
         this->m_model->getMode() != Model::eSetup &&         
@@ -56,7 +54,12 @@ void Controller::pump(boolean pin2State) {
     //then go to setup mode
     this->m_model->setup();    
   }
-  
+}
+
+/**
+* Update view to reflect current state.
+*/
+void Controller::handleViewUpdate() {
   //Update view in every 300 ms.
   static unsigned long frameTime = 0;
   if (millis() - frameTime > 300) {
@@ -72,15 +75,12 @@ void Controller::pump(boolean pin2State) {
     frameTime = millis();
     m_view->setLedStatus(mode);
   }
-  
-  //Print state for every second.
-  static unsigned long secondTime = 0;
-  if (millis() - secondTime > 1000) {
-    m_model->printState();
-    secondTime = millis();
-  }
-  
-  //Throttle potentiometer.
+}
+
+/**
+* Read value from throttle potentiometer.
+*/
+void Controller::handlePotentiometer() {
   //Calculate mean over 1024 samples and have treshold value to avoid instability.
   static long sum = 0;
   static int counter = 0;
@@ -97,5 +97,24 @@ void Controller::pump(boolean pin2State) {
     if (abs(current-meanValue) > 3) {
       m_model->setThrottle(meanValue);
     }  
+  }
+}
+
+/**
+  pump() is called on every Arduino loop().
+  Parameter pin2State is a speed hack.
+*/
+void Controller::pump(boolean pin2State) {
+  
+  handleButtonEvent(pin2State);
+  handleKeepPressed();
+  handlePotentiometer();
+  handleViewUpdate();
+  
+  //Print state for every second.
+  static unsigned long secondTime = 0;
+  if (millis() - secondTime > 1000) {
+    m_model->printState();
+    secondTime = millis();
   }
 }

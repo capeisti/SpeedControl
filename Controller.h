@@ -9,8 +9,11 @@ class Controller {
     void interrupt(unsigned long time);
     void pump(boolean pin2State);
     
-  private:
-    void keyEvent(boolean pressed);    
+  private: 
+    void handleButtonEvent(boolean pin2State);
+    void handleKeepPressed();
+    void handleViewUpdate();
+    void handlePotentiometer();
    
     Model* m_model;
     View* m_view;
