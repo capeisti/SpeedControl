@@ -30,6 +30,7 @@ class Model {
     int doPID();
     void switchTargetValue();
     boolean isAutoPilotMode();
+    void printJsonField(const String& field, int value, boolean lastField);
   
     EMode m_mode;
     boolean m_setup;

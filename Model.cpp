@@ -68,21 +68,26 @@ void Model::resume() {
 
 void Model::printState() {
   if (Serial) {
-    Serial.print("lowSpeed=");
-    Serial.print(this->lowValue);
-    Serial.print(":highSpeed=");
-    Serial.print(this->highValue);
-    Serial.print(":targetSpeed=");
-    Serial.print(this->targetValue);
-    Serial.print(":measuredSpeed=");
-    Serial.print(this->speedValue);
-    Serial.print(":throttleValue=");
-    Serial.print(this->throttleValue);
-    Serial.print(":servoValue=");
-    Serial.print(this->servoValue);
-    Serial.print(":mode=");
-    Serial.print(this->m_mode);
-    Serial.println("");
+    Serial.print("{");
+    printJsonField("lowSpeed", this->lowValue, false);
+    printJsonField("highSpeed", this->highValue, false);
+    printJsonField("targetSpeed", this->targetValue, false);
+    printJsonField("measuredSpeed", this->targetValue, false);
+    printJsonField("throttleValue", this->throttleValue, false);
+    printJsonField("servoValue", this->servoValue, false);
+    printJsonField("mode", this->m_mode, true);
+    Serial.println("}");
+  }
+}
+
+void Model::printJsonField(const String& field, int value, boolean lastField) {
+  Serial.print("\"");
+  Serial.print(field);
+  Serial.print("\": \"");
+  Serial.print(value);
+  Serial.print("\"");
+  if (!lastField) {
+    Serial.print(", ");
   }
 }
 
