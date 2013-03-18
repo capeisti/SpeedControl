@@ -163,11 +163,16 @@ void Model::switchTargetValue() {
 
 int Model::doPID() {
     //Do PID
-    int p = this->targetValue - this->speedValue;
-    int i = 0;
-    int d = 0;
-    int error = p * 10 + i + d;
-    return error;
+    int e = this->targetValue - this->speedValue;
+    static int prevE = e;    
+    int p = e;
+    static int i = 0;
+    i += e;
+    int d = e - prevE;
+    int pid = p * 10 + i * 5 + d * 2;
+    
+    prevE = e;
+    return pid;
 }
 
 boolean Model::isAutoPilotMode() {
