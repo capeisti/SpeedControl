@@ -1,5 +1,6 @@
 #include <Servo.h>
 #include <EEPROM.h>
+#include <aJSON.h>
 #include "View.h"
 #include "Controller.h"
 #include "SerialController.h"
@@ -7,7 +8,8 @@
 
 String inputStringHW = "";         // a string to hold incoming data
 boolean stringCompleteHW = false;  // whether the string is complete
-String inputStringSW = "";         // a string to hold incoming data
+
+aJsonStream serial_stream(&Serial);
 
 View* view;
 Model* model;
@@ -25,7 +27,6 @@ void setup() {
   
   // reserve 200 bytes for the inputString:
   inputStringHW.reserve(200);
-  inputStringSW.reserve(200);
   attachInterrupt(1, interrupt, CHANGE);
 }
 
@@ -39,12 +40,16 @@ void loop() {
     stringCompleteHW = false;
   }
   
-  while (Serial.available()) {  
-    char inChar = (char)Serial.read();     
-    inputStringSW += inChar;
-    if (inChar == '\n') {
-      serial->serialGetUSB(inputStringSW);   
-    } 
+  if (serial_stream.available()) {
+    /* First, skip any accidental whitespace like newlines. */
+    serial_stream.skip();
+  }
+  
+  if (serial_stream.available()) {
+    /* Something real on input, let's take a look. */
+    aJsonObject *msg = aJson.parse(&serial_stream);
+    serial->serialGetUSB(msg);
+    aJson.deleteItem(msg);
   }
 }
 

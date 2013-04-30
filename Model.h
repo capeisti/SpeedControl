@@ -23,6 +23,9 @@ class Model {
     void setMeasuredSpeed(int value);
     void printState();
     void secondTick();
+    void setLowValue(int value);
+    void setHighValue(int value);
+    void setMode(EMode mode);
     
   private:
     void setServo(int value);

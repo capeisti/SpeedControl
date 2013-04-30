@@ -32,6 +32,10 @@ void Model::nextMode() {
   }
 }
 
+void Model::setMode(EMode mode) {
+  m_mode = mode;
+}
+
 Model::EMode Model::getMode() {
   if (m_setup) {
     return eSetup;
@@ -66,13 +70,21 @@ void Model::resume() {
   EEPROM.write(EEPROM_MEM+3, (this->highValue>>8) & 0xFF);
 }
 
+void Model::setLowValue(int value) {
+  this->lowValue = value;
+}
+
+void Model::setHighValue(int value) {
+  this->highValue = value;
+}
+
 void Model::printState() {
   if (Serial) {
     Serial.print("{");
     printJsonField("lowSpeed", this->lowValue, false);
     printJsonField("highSpeed", this->highValue, false);
     printJsonField("targetSpeed", this->targetValue, false);
-    printJsonField("measuredSpeed", this->targetValue, false);
+    printJsonField("measuredSpeed", this->speedValue, false);
     printJsonField("throttleValue", this->throttleValue, false);
     printJsonField("servoValue", this->servoValue, false);
     printJsonField("mode", this->m_mode, true);
