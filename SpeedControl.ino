@@ -5,8 +5,9 @@
 #include "SerialController.h"
 #include "Model.h"
 
-String inputString = "";         // a string to hold incoming data
-boolean stringComplete = false;  // whether the string is complete
+String inputStringHW = "";         // a string to hold incoming data
+boolean stringCompleteHW = false;  // whether the string is complete
+String inputStringSW = "";         // a string to hold incoming data
 
 View* view;
 Model* model;
@@ -23,7 +24,8 @@ void setup() {
   Serial.begin(9600);
   
   // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
+  inputStringHW.reserve(200);
+  inputStringSW.reserve(200);
   attachInterrupt(1, interrupt, CHANGE);
 }
 
@@ -31,10 +33,18 @@ void loop() {
   boolean state = digitalRead(2);
   controller->pump(state);
   
-  if(stringComplete) {
-    serial->serialGet(inputString);
-    inputString = "";
-    stringComplete = false;
+  if(stringCompleteHW) {
+    serial->serialGet(inputStringHW);
+    inputStringHW = "";
+    stringCompleteHW = false;
+  }
+  
+  while (Serial.available()) {  
+    char inChar = (char)Serial.read();     
+    inputStringSW += inChar;
+    if (inChar == '\n') {
+      serial->serialGetUSB(inputStringSW);   
+    } 
   }
 }
 
@@ -56,13 +66,11 @@ void serialEvent1() {
     // get the new byte:
     char inChar = (char)Serial1.read();     
     // add it to the inputString:
-    inputString += inChar;
+    inputStringHW += inChar;
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:
     if (inChar == '\n') {
-      stringComplete = true;
+      stringCompleteHW = true;
     } 
   }
 }
-
-

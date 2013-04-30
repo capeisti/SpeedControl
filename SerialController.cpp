@@ -43,3 +43,7 @@ void SerialController::serialGet(const String& line) {
   
   Serial1.print(line);
 }
+
+void SerialController::serialGetUSB(const String& line) {
+  Serial.println("got something");
+}

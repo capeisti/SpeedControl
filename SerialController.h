@@ -7,6 +7,7 @@ class SerialController {
   public:
     SerialController(Model*, View*);
     void serialGet(const String& line);
+    void serialGetUSB(const String& line);
     
   private:
     String getField(const String& line, int field);
