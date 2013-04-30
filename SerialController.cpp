@@ -40,4 +40,6 @@ void SerialController::serialGet(const String& line) {
     m_model->setMeasuredSpeed(atoi(buf));
     m_view->setCommAlive(); 
   }
+  
+  Serial1.print(line);
 }
