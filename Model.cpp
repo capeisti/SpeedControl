@@ -181,7 +181,7 @@ int Model::doPID() {
     static int i = 0;
     i += e;
     int d = e - prevE;
-    int pid = p * 10 + i * 5 + d * 2;
+    int pid = p * 2 + i * 0 + d * 0;
     
     prevE = e;
     return pid;

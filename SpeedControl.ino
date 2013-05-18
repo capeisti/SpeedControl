@@ -18,7 +18,7 @@ SerialController* serial;
 
 void setup() {
   // initialize serial:
-  Serial1.begin(9600);
+  Serial1.begin(4800);
   view = new View();
   model = new Model();
   serial = new SerialController(model, view);
